@@ -57,7 +57,14 @@ def parse_date(date_number):
 	year = date_number % 100
 	return (int(month), int(day), int(year), time)
 
-
+"""
+Reads the input file one line at a time. 
+Collects the date and duration of each ride to compile average durations for each month and total average duration. 
+To determine when the first unbalancing occurs, I maintain a heap of bicycles currently in use, where the key is their return time, 
+and the total number of bicylces at each terminal in a dictionary. 
+For each outgoing bicyle, I check to see if there are any outgoing bicycles that were returned before that bicycle left, and adjust total
+terminal counts accordingly. If the outgoing bicycle brings the terminal count of the terminal it is leaving down to zero, then unbalancing has occured. 
+"""
 def main(argv):
 	monthly_duration = zeroed_dictionary(12)
 	monthly_rides = zeroed_dictionary(12)
@@ -90,13 +97,13 @@ def main(argv):
 			else:
 				rides_by_date[date] = 0
 
+			# Bicycle balancing
 			if balanced:
 				first_return = (float('inf'), None)
 				if len(out_bike_heap) > 0:
 					first_return = heappop(out_bike_heap)
 
 				while len(out_bike_heap) >= 0 and out_time > first_return[0]:
-					print(out_time)
 					if first_return[1] in terminal_bike_count:
 						terminal_bike_count[first_return[1]] += 1
 					else:
@@ -112,7 +119,6 @@ def main(argv):
 
 				if terminal_bike_count[out_terminal] == 0:
 					balanced = False
-					print("Unbalanced at terminal " + str(out_terminal))
 					first_unbalanced_terminal = out_terminal
 					first_unbalanced_time = parse_date(out_time)
 
@@ -123,16 +129,21 @@ def main(argv):
 
 
 		compiled_averages = average_durations(monthly_rides, monthly_duration)
-		print(compiled_averages)
 		most_popular_date = max(rides_by_date.keys(), key=(lambda key: rides_by_date[key]))
-		print(most_popular_date + " : " + str(rides_by_date[most_popular_date]))
 
 		if len(argv) == 1:
 			print("Month : Average Duration")
 			for month in compiled_averages.keys():
 				print(str(month) + " : " + str(compiled_averages[month]))
 			print("Most Popular Date: " + most_popular_date + " - " + str(rides_by_date[most_popular_date]) + " rides.")
-			print("Unbalanced at terminal " + str(first_unbalanced_terminal) + " at date and time (month, day, year, time) " + str(first_unbalanced_time)) 
+			print("Unbalanced at terminal " + str(first_unbalanced_terminal) + " at date and time (month, day, year, time) " + str(first_unbalanced_time))
+		else:
+			with open(argv[1], 'w') as write_file:
+				write_file.write("Month : Average Duration\n") 
+				for month in compiled_averages.keys():
+					write_file.write(str(month) + " : " + str(compiled_averages[month]) + " \n")
+				write_file.write("Most Popular Date: " + most_popular_date + " - " + str(rides_by_date[most_popular_date]) + " rides.\n")
+				write_file.write("Unbalanced at terminal " + str(first_unbalanced_terminal) + " at date and time (month, day, year, time) " + str(first_unbalanced_time) + "\n")
 
 
 
