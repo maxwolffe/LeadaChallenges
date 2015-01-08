@@ -1,11 +1,17 @@
+Question 1:
 Month : Average Duration
 1 : 16.896664346924293 
 2 : 17.465361298009533 
-Total : 20.515169021745418 
 8 : 43.136378052648276 
 9 : 26.302178821851605 
 10 : 19.867705434346906 
 11 : 20.681403030678393 
 12 : 18.88651268389129 
+Total : 20.515169021745418 
+
+
+Question 2:
 Most Popular Date: 9/25/13 - 1263 rides.
+
+Question 3:
 Unbalanced at terminal 54 at date and time (month, day, year, time) (9, 2, 13, 11.330000000074506)
